@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock title %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <h2 class="my-4">Add task</h2>
+    </div>
+    <div class="row">
+        <form action="{% url "task" %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name='title' placeholder="Title" required>
+
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class='form-control' name="description" id="description" cols="40" rows="5"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    {% if tasks %}
+    <div class="row my-4">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Title</th>
+                    <th scope="col" class="w-25">Description</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Added on</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Mark as complete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    {% if task.task_status %}
+                    <td class="text-muted">{{task.title}}</td>
+                    <td class="text-muted">{{task.description}}</td>
+                    <td class="text-muted">Completed</td>
+                    <td class="text-muted">{{task.createdOn}}</td>
+                    {% else %}
+                    <td>{{task.title}}</td>
+                    <td>{{task.description}}</td>
+                    <td>Remaining</td>
+                    <td>{{task.createdOn}}</td>
+                    {% endif %}
+                    <td class="w-25">
+                        <a class="btn btn-info mx-2" href="{% url 'update' task.pk %}">Update</a>
+                        <a class="btn btn-danger mx-2" href="{% url 'delete' task.pk %}">Delete</a>
+                    </td>
+                    <td>{% if task.task_status == False %}
+                        <a class="btn btn-info" href="{% url 'complete' task.pk %}">Mark</a>
+                        {% else %}
+                        <a class="btn btn-success" href="{% url 'complete' task.pk %}">Marked</a>
+                        {% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}
